@@ -543,12 +543,81 @@ with tab4:
 # ==================== TAB 5: BLEND SPARK ASSISTANT ====================
 with tab5:
 
-    # --- Blend brand CSS injection ---
+    # --- Blend brand CSS injection (light + dark mode aware) ---
     st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap');
 
-    /* Blend Spark tab scoped styles */
+    /* ── Light mode variables (default) ── */
+    :root {
+        --blend-heading: #053057;
+        --blend-body: #314550;
+        --blend-accent: #053057;
+        --blend-accent-label: #0B0D0E;
+        --blend-badge-bg: linear-gradient(135deg, #00EDED 0%, #A2F3F3 100%);
+        --blend-badge-text: #053057;
+        --blend-divider-start: #00EDED;
+        --blend-divider-mid: #A2F3F3;
+        --blend-btn-border: rgba(5, 48, 87, 0.25);
+        --blend-btn-text: #053057;
+        --blend-btn-hover-bg: rgba(0, 237, 237, 0.10);
+        --blend-btn-hover-border: #00EDED;
+        --blend-send-bg: #053057;
+        --blend-send-fg: #00EDED;
+        --blend-send-hover-bg: #00EDED;
+        --blend-send-hover-fg: #053057;
+        --blend-footer: #314550;
+        --blend-footer-accent: #053057;
+        --blend-footer-border: rgba(5, 48, 87, 0.12);
+    }
+
+    /* ── Dark mode variables ── */
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --blend-heading: #A2F3F3;
+            --blend-body: #d0d8dc;
+            --blend-accent: #00EDED;
+            --blend-accent-label: #00EDED;
+            --blend-badge-bg: linear-gradient(135deg, #053057 0%, #0a4a7a 100%);
+            --blend-badge-text: #00EDED;
+            --blend-divider-start: #00EDED;
+            --blend-divider-mid: #053057;
+            --blend-btn-border: rgba(0, 237, 237, 0.3);
+            --blend-btn-text: #A2F3F3;
+            --blend-btn-hover-bg: rgba(0, 237, 237, 0.12);
+            --blend-btn-hover-border: #00EDED;
+            --blend-send-bg: #00EDED;
+            --blend-send-fg: #053057;
+            --blend-send-hover-bg: #053057;
+            --blend-send-hover-fg: #00EDED;
+            --blend-footer: #8a9aa3;
+            --blend-footer-accent: #00EDED;
+            --blend-footer-border: rgba(0, 237, 237, 0.15);
+        }
+    }
+    /* Streamlit uses data-testid on html/body — also catch its dark class */
+    [data-testid="stAppViewContainer"][data-theme="dark"],
+    .stApp[data-theme="dark"] {
+        --blend-heading: #A2F3F3;
+        --blend-body: #d0d8dc;
+        --blend-accent: #00EDED;
+        --blend-accent-label: #00EDED;
+        --blend-badge-bg: linear-gradient(135deg, #053057 0%, #0a4a7a 100%);
+        --blend-badge-text: #00EDED;
+        --blend-btn-border: rgba(0, 237, 237, 0.3);
+        --blend-btn-text: #A2F3F3;
+        --blend-btn-hover-bg: rgba(0, 237, 237, 0.12);
+        --blend-btn-hover-border: #00EDED;
+        --blend-send-bg: #00EDED;
+        --blend-send-fg: #053057;
+        --blend-send-hover-bg: #053057;
+        --blend-send-hover-fg: #00EDED;
+        --blend-footer: #8a9aa3;
+        --blend-footer-accent: #00EDED;
+        --blend-footer-border: rgba(0, 237, 237, 0.15);
+    }
+
+    /* ── Blend Spark component styles ── */
     .blend-header {
         display: flex;
         align-items: center;
@@ -559,13 +628,13 @@ with tab5:
         font-family: 'Montserrat', sans-serif;
         font-weight: 600;
         font-size: 1.75rem;
-        color: #053057;
+        color: var(--blend-heading);
         margin: 0;
         letter-spacing: -0.02em;
     }
     .blend-header .spark-badge {
-        background: linear-gradient(135deg, #00EDED 0%, #A2F3F3 100%);
-        color: #053057;
+        background: var(--blend-badge-bg);
+        color: var(--blend-badge-text);
         font-family: 'Montserrat', sans-serif;
         font-weight: 600;
         font-size: 0.65rem;
@@ -578,21 +647,15 @@ with tab5:
     .blend-subtitle {
         font-family: 'Montserrat', sans-serif;
         font-size: 0.9rem;
-        color: #314550;
+        color: var(--blend-body);
         margin-bottom: 20px;
         line-height: 1.5;
     }
     .blend-divider {
         height: 2px;
-        background: linear-gradient(90deg, #00EDED 0%, #A2F3F3 40%, transparent 100%);
+        background: linear-gradient(90deg, var(--blend-divider-start) 0%, var(--blend-divider-mid) 40%, transparent 100%);
         border: none;
         margin: 16px 0 20px 0;
-    }
-    .blend-pill-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-bottom: 6px;
     }
     .blend-section-label {
         font-family: 'Montserrat', sans-serif;
@@ -600,52 +663,51 @@ with tab5:
         font-weight: 600;
         letter-spacing: 0.1em;
         text-transform: uppercase;
-        color: #00EDED;
+        color: var(--blend-accent-label);
         margin-bottom: 10px;
     }
     .blend-powered {
         font-family: 'Montserrat', sans-serif;
         font-size: 0.72rem;
-        color: #314550;
-        opacity: 0.7;
+        color: var(--blend-footer);
         text-align: center;
         margin-top: 16px;
         padding-top: 12px;
-        border-top: 1px solid rgba(0, 237, 237, 0.15);
+        border-top: 1px solid var(--blend-footer-border);
     }
     .blend-powered span {
-        color: #00EDED;
-        font-weight: 500;
+        color: var(--blend-footer-accent);
+        font-weight: 600;
     }
 
-    /* Style the Streamlit chat input area */
+    /* ── Chat input ── */
     [data-testid="stChatInput"] textarea {
         font-family: 'Montserrat', sans-serif !important;
     }
     [data-testid="stChatInput"] button {
-        background-color: #053057 !important;
-        color: #00EDED !important;
+        background-color: var(--blend-send-bg) !important;
+        color: var(--blend-send-fg) !important;
     }
     [data-testid="stChatInput"] button:hover {
-        background-color: #00EDED !important;
-        color: #053057 !important;
+        background-color: var(--blend-send-hover-bg) !important;
+        color: var(--blend-send-hover-fg) !important;
     }
 
-    /* Style suggested question buttons inside this tab */
+    /* ── Suggested question buttons ── */
     div[data-testid="stVerticalBlockBorderWrapper"] button[kind="secondary"] {
         font-family: 'Montserrat', sans-serif !important;
         font-size: 0.78rem !important;
-        border-color: rgba(0, 237, 237, 0.3) !important;
-        color: #053057 !important;
+        border-color: var(--blend-btn-border) !important;
+        color: var(--blend-btn-text) !important;
         transition: all 0.2s ease !important;
     }
     div[data-testid="stVerticalBlockBorderWrapper"] button[kind="secondary"]:hover {
-        border-color: #00EDED !important;
-        background-color: rgba(0, 237, 237, 0.08) !important;
-        color: #053057 !important;
+        border-color: var(--blend-btn-hover-border) !important;
+        background-color: var(--blend-btn-hover-bg) !important;
+        color: var(--blend-btn-text) !important;
     }
 
-    /* Style the toggle */
+    /* ── Toggle label ── */
     div[data-testid="stVerticalBlockBorderWrapper"] label[data-testid="stWidgetLabel"] p {
         font-family: 'Montserrat', sans-serif !important;
     }
