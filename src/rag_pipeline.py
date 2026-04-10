@@ -475,8 +475,14 @@ def retrieve(question: str, store: KnowledgeStore, k: int = 5) -> list[dict]:
 def execute_code(code: str, df: pd.DataFrame) -> dict:
     """Execute Python code in a sandboxed environment with access to the dataset.
 
-    Returns dict with 'success', 'output', and optionally 'error'.
+    Available: df (DataFrame), pd, np, px (plotly.express), go (plotly.graph_objects).
+    If the code creates a Plotly figure assigned to `fig`, it is returned for rendering.
+
+    Returns dict with 'success', 'output', 'error', and optionally 'figure'.
     """
+    import plotly.express as px
+    import plotly.graph_objects as go
+
     allowed_globals = {
         "__builtins__": {
             "len": len, "range": range, "enumerate": enumerate, "zip": zip,
@@ -489,6 +495,8 @@ def execute_code(code: str, df: pd.DataFrame) -> dict:
         },
         "pd": pd,
         "np": np,
+        "px": px,
+        "go": go,
         "df": df.copy(),
     }
 
@@ -497,7 +505,14 @@ def execute_code(code: str, df: pd.DataFrame) -> dict:
         with redirect_stdout(stdout_capture):
             exec(code, allowed_globals)
         output = stdout_capture.getvalue()
-        return {"success": True, "output": output.strip() if output.strip() else "Code executed successfully (no print output)."}
+        # Check if a plotly figure was created
+        fig = allowed_globals.get("fig")
+        is_plotly = isinstance(fig, (go.Figure,))
+        return {
+            "success": True,
+            "output": output.strip() if output.strip() else "Code executed successfully.",
+            "figure": fig if is_plotly else None,
+        }
     except Exception as e:
         return {"success": False, "output": stdout_capture.getvalue(), "error": f"{type(e).__name__}: {e}"}
 
@@ -523,14 +538,25 @@ You have two capabilities:
 1. A knowledge base with pre-computed insights about the dataset and model
 2. A Python sandbox where you can run code on the actual Titanic DataFrame (variable `df`)
 
-Available in the sandbox: `df` (pandas DataFrame with all 891 rows), `pd` (pandas), `np` (numpy).
+Available in the sandbox:
+- `df` — pandas DataFrame with all 891 rows and original columns
+- `pd` — pandas
+- `np` — numpy
+- `px` — plotly.express (for charts)
+- `go` — plotly.graph_objects (for charts)
 
-When to use code: If the question requires a specific computation, filtering, or aggregation that isn't directly in the context, write Python code to compute it. Use print() to output results.
+IMPORTANT RULES:
+- Do NOT use `import` statements. All libraries are pre-loaded.
+- Do NOT use matplotlib. Use plotly (px or go) for all charts.
+- For charts: assign the figure to a variable called `fig`. Example: `fig = px.bar(...)`.
+- For data results: use `print()` to output values.
+- When a question can be answered from context alone, just answer directly without code.
 
-IMPORTANT: When you want to run code, output EXACTLY this format (no extra text before the code block):
+When you want to run code, output EXACTLY this format:
 ```python
-# your code here
-print(result)
+# your code here using df, pd, np, px, go
+fig = px.bar(...)  # for charts
+print(result)      # for data
 ```
 
 After seeing the code output, provide your final answer incorporating both the context AND code results.
@@ -538,8 +564,7 @@ After seeing the code output, provide your final answer incorporating both the c
 Guidelines:
 - Be precise with numbers — cite from context or compute with code.
 - Keep answers concise but thorough.
-- When a question can be answered from context alone, just answer it directly without code.
-- When you need code, write clean pandas operations and always print() the results.
+- Write clean pandas/plotly operations.
 """
 
 
@@ -608,9 +633,10 @@ Answer based on the context above."""
 
         # Second LLM call with code results
         messages.append({"role": "assistant", "content": first_response})
+        chart_note = " A chart was also generated and will be displayed." if code_result.get("figure") else ""
         messages.append({
             "role": "user",
-            "content": f"Code execution result:\n```\n{code_output}\n```\n\nNow provide your final answer to the stakeholder incorporating these results. Do not include code blocks in your final answer.",
+            "content": f"Code execution result:\n```\n{code_output}\n```{chart_note}\n\nNow provide your final answer to the stakeholder incorporating these results. Do not include code blocks in your final answer.",
         })
 
         response2 = client.chat.completions.create(
@@ -620,6 +646,7 @@ Answer based on the context above."""
             "answer": response2.choices[0].message.content,
             "code": code,
             "code_output": code_output,
+            "figure": code_result.get("figure"),
         }
 
     return {"answer": first_response}

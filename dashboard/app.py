@@ -730,6 +730,10 @@ with tab5:
     for msg in st.session_state.chat_messages:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
+            if msg.get("figure_json"):
+                import plotly.io as pio
+                fig = pio.from_json(msg["figure_json"])
+                st.plotly_chart(fig, use_container_width=True)
             if msg.get("code"):
                 with st.expander("Code executed"):
                     st.code(msg["code"], language="python")
@@ -765,6 +769,8 @@ with tab5:
                             enable_code=enable_code,
                         )
                         st.markdown(result["answer"])
+                        if result.get("figure"):
+                            st.plotly_chart(result["figure"], use_container_width=True)
                         if result.get("code"):
                             with st.expander("Code executed"):
                                 st.code(result["code"], language="python")
@@ -773,12 +779,15 @@ with tab5:
                         if result["sources"]:
                             with st.expander("Sources used"):
                                 st.write(", ".join(result["sources"]))
+                        # Store figure as JSON for chat history replay
+                        fig_json = result["figure"].to_json() if result.get("figure") else None
                         st.session_state.chat_messages.append({
                             "role": "assistant",
                             "content": result["answer"],
                             "sources": result["sources"],
                             "code": result.get("code"),
                             "code_output": result.get("code_output"),
+                            "figure_json": fig_json,
                         })
                     except Exception as e:
                         error_msg = f"Error generating response: {str(e)}"
