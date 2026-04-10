@@ -36,6 +36,20 @@ st.set_page_config(
     layout="wide",
 )
 
+# --- Global Blend accent via CSS (doesn't lock the theme toggle) ---
+st.markdown("""
+<style>
+    /* Override Streamlit primary accent without locking the theme */
+    :root, [data-testid="stAppViewContainer"] {
+        --primary-color: #00EDED !important;
+    }
+    /* Accent elements: toggle, slider, spinner, links */
+    .stSlider [data-testid="stThumbValue"],
+    .stCheckbox label span[data-testid="stCheckboxActive"],
+    a { color: #00EDED !important; }
+</style>
+""", unsafe_allow_html=True)
+
 # --- Color constants ---
 SURVIVED_COLOR = "#E8634A"
 PERISHED_COLOR = "#566573"

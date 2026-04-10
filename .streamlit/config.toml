@@ -1,6 +1,3 @@
-[theme]
-primaryColor = "#00EDED"
-
 [server]
 headless = true
 port = 8501
