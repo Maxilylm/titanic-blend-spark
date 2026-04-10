@@ -1,0 +1,27 @@
+{
+  "agent": "rag-builder",
+  "status": "completed",
+  "documents": {
+    "count": 16,
+    "types": {
+      "structured_analytics": 9,
+      "model_results": 3,
+      "methodology": 4
+    }
+  },
+  "chunks": {
+    "count": 16,
+    "avg_size": 450,
+    "method": "structured"
+  },
+  "embedding_model": "all-MiniLM-L6-v2",
+  "vector_store": "chromadb",
+  "llm_provider": "groq",
+  "llm_model": "llama-3.3-70b-versatile",
+  "pipeline_files": [
+    "src/rag_pipeline.py",
+    "src/rag_config.json",
+    "src/llm_utils.py"
+  ],
+  "dashboard_integration": "dashboard/app.py (Tab 5: AI Chatbot)"
+}

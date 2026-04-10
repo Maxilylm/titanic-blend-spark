@@ -1,0 +1,203 @@
+{
+  "fingerprint": "86c46fd2a53e93605ea5aa118d6f26c6906735a8bd6dd4fddab358423394f4da",
+  "source_path": "/Users/maximolorenzoylosada/Documents/2026-03-03 DEMO/Titanic-Dataset.csv",
+  "eda_summary": {
+    "shape": {
+      "rows": 891,
+      "cols": 12
+    },
+    "column_types": {
+      "numerical": [
+        "PassengerId",
+        "Age",
+        "Fare"
+      ],
+      "categorical": [
+        "Pclass",
+        "Sex",
+        "SibSp",
+        "Parch",
+        "Ticket",
+        "Cabin",
+        "Embarked"
+      ],
+      "datetime": [],
+      "text": [],
+      "id_like": [
+        "Name"
+      ],
+      "target": "Survived"
+    },
+    "missing_values": {
+      "Age": {
+        "count": 177,
+        "pct": 19.87
+      },
+      "Cabin": {
+        "count": 687,
+        "pct": 77.1
+      },
+      "Embarked": {
+        "count": 2,
+        "pct": 0.22
+      }
+    },
+    "numerical_stats": {
+      "PassengerId": {
+        "mean": 446.0,
+        "median": 446.0,
+        "std": 257.3538,
+        "min": 1.0,
+        "max": 891.0,
+        "skew": 0.0
+      },
+      "Age": {
+        "mean": 29.6991,
+        "median": 28.0,
+        "std": 14.5265,
+        "min": 0.42,
+        "max": 80.0,
+        "skew": 0.3891
+      },
+      "Fare": {
+        "mean": 32.2042,
+        "median": 14.4542,
+        "std": 49.6934,
+        "min": 0.0,
+        "max": 512.3292,
+        "skew": 4.7873
+      }
+    },
+    "categorical_stats": {
+      "Pclass": {
+        "n_unique": 3,
+        "top_values": {
+          "3": 491,
+          "1": 216,
+          "2": 184
+        }
+      },
+      "Sex": {
+        "n_unique": 2,
+        "top_values": {
+          "male": 577,
+          "female": 314
+        }
+      },
+      "SibSp": {
+        "n_unique": 7,
+        "top_values": {
+          "0": 608,
+          "1": 209,
+          "2": 28,
+          "4": 18,
+          "3": 16
+        }
+      },
+      "Parch": {
+        "n_unique": 7,
+        "top_values": {
+          "0": 678,
+          "1": 118,
+          "2": 80,
+          "5": 5,
+          "3": 5
+        }
+      },
+      "Ticket": {
+        "n_unique": 681,
+        "top_values": {
+          "347082": 7,
+          "CA. 2343": 7,
+          "1601": 7,
+          "3101295": 6,
+          "CA 2144": 6
+        }
+      },
+      "Cabin": {
+        "n_unique": 147,
+        "top_values": {
+          "B96 B98": 4,
+          "G6": 4,
+          "C23 C25 C27": 4,
+          "C22 C26": 3,
+          "F33": 3
+        }
+      },
+      "Embarked": {
+        "n_unique": 3,
+        "top_values": {
+          "S": 644,
+          "C": 168,
+          "Q": 77
+        }
+      }
+    },
+    "high_correlations": [],
+    "target": "Survived",
+    "quality_issues": [
+      {
+        "column": "Fare",
+        "issue": "highly_skewed",
+        "severity": "medium",
+        "skew": 4.79
+      },
+      {
+        "column": "Ticket",
+        "issue": "high_cardinality",
+        "severity": "medium",
+        "n_unique": 681
+      },
+      {
+        "column": "Cabin",
+        "issue": "high_cardinality",
+        "severity": "medium",
+        "n_unique": 147
+      },
+      {
+        "column": "Cabin",
+        "issue": "majority_missing",
+        "severity": "high",
+        "pct": 77.1
+      }
+    ]
+  },
+  "target_variable": "Survived",
+  "detected_task_type": "binary_classification",
+  "survival_rates": {
+    "overall": 38.38,
+    "by_sex": {
+      "male": 18.89,
+      "female": 74.2
+    },
+    "by_pclass": {
+      "1": 62.96,
+      "2": 47.28,
+      "3": 24.24
+    },
+    "by_embarked": {
+      "S": 33.7,
+      "C": 55.36,
+      "Q": 38.96
+    }
+  },
+  "key_findings": {
+    "most_predictive_feature": "Sex (correlation: +0.543)",
+    "class_imbalance": "61.6% did not survive vs 38.4% survived",
+    "critical_missing": [
+      "Cabin (77.1%)",
+      "Age (19.9%)"
+    ],
+    "high_fare_outliers": 116,
+    "zero_fares": 15
+  },
+  "reports_saved": [
+    "reports/01_numerical_distributions.png",
+    "reports/02_categorical_distributions.png",
+    "reports/03_boxplots_outliers.png",
+    "reports/04_correlation_heatmap.png",
+    "reports/05_target_variable_analysis.png",
+    "reports/06_missing_data.png",
+    "reports/eda_report.md"
+  ]
+}

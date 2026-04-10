@@ -1,0 +1,1 @@
+["Sex_binary", "Title_encoded", "Pclass", "HasCabin", "Deck_encoded", "Fare_log1p", "FareBin", "FamilySize", "IsAlone", "FamilyType", "Age_imputed", "AgeBin", "IsChild", "IsMother", "Embarked_C", "Embarked_Q", "Embarked_S", "Sex_Pclass"]

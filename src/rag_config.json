@@ -1,0 +1,13 @@
+{
+  "embedding_model": "all-MiniLM-L6-v2",
+  "vector_store": "chroma",
+  "vector_store_path": "vector_stores/chroma",
+  "collection_name": "titanic_kb",
+  "chunk_method": "structured",
+  "llm_provider": "groq",
+  "llm_model": "llama-3.3-70b-versatile",
+  "llm_temperature": 0.3,
+  "llm_max_tokens": 1024,
+  "retrieval_k": 5,
+  "env_key": "GROQ_API_KEY"
+}
